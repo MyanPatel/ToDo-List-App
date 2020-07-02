@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const date = require(__dirname + "/date.js");
+// Step 1: require the mongoose package
 const mongoose = require('mongoose');
 
 const app = express();
@@ -10,8 +11,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 
-let items = ["Buy food", "Cook Food", "Eat Food"];
-let workItems = [];
+// Deleted old arrays that previously stored ToDo tasks
+
+// Step 2: Establish a connection to the MongoDB server
+mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser:true});
+
+// Step 3: Create a schema for the todolistDB database
+const itemsSchema = new mongoose.Schema({
+    name: String
+});
 
 app.get("/", function(req, res){
 
