@@ -41,15 +41,14 @@ const Item3 = new Item ({
 // this allows to use the insertMany() method to insert them all at once
 const defaultArray = [Item1, Item2, Item3];
 
-// Step 6: Inserting all default items into the database
-// Item.insertMany(defaultArray, function(err){
-//     if (err){
-//         console.log(err);
-//     } else{
-//         console.log("Default items successfully saved!");
-//     }
-// });
+// Creating a new schema for custom lists
+const listSchema = {
+    name: String,
+    items: [itemsSchema] // for every new list created, will have a name and a list of item documentes associated with it
+};
 
+// Making a new model for the custom list schema created above
+const List = new mongoose.model("List",listSchema);
 
 app.get("/", function(req, res){
     
@@ -80,6 +79,38 @@ app.get("/", function(req, res){
         }
     });
 });
+
+// Creating custom lists using Express Route Parameters
+app.get("/:customListName", function(req, res){
+    const customListName = req.params.customListName;
+
+    // Checking to see if the custom list has already been created
+    // findOne() method returns an object, NOT an array
+    List.findOne({name:customListName}, function(err, foundList){
+        // '!err' = if there are NO errors ...
+        if (!err){
+            // If the custom list doesn't exist ...
+            if (!foundList){
+                console.log("Doesn't exist!");
+                // Can now make a new list document based from the new list schema and model
+                // i.e. Create a new list
+                const list = new List ({
+                    name: customListName,
+                    items: defaultArray
+                });
+                list.save();
+                // This is so the new list + new title is rendered to the screen
+                res.redirect("/" + customListName);
+            }else{
+                // Show an existing list
+                console.log("Match found! Custom list already exists!");
+                res.render('list', {listTitle: customListName, newListItems: foundList.items});
+            }
+        }
+    });
+});
+
+
 // POST request handler for root route/ Home page
 app.post('/', function(req, res){
     // Retrieving the user input
@@ -108,13 +139,6 @@ app.post("/delete", function(req, res){
             res.redirect('/');
         }
     })
-});
-
-// Work route
-app.get('/work', function(req,res){
-    
-    res.render('list',{listTitle: "Work List", newListItems: workItems});
-
 });
 
 // POST request handler for Work page route
