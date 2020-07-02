@@ -115,15 +115,28 @@ app.get("/:customListName", function(req, res){
 app.post('/', function(req, res){
     // Retrieving the user input
     const itemName = req.body.newItem;
+    // Retrieving the custom list name from the submit button using the name and value attributes
+    const listName = req.body.list;
 
     // Creating a new document based on the user input stored in the constant above
     const item = new Item ({
         name: itemName
     });
 
-    // Using the mongoose shortcut to save the new item to the database
-    item.save();
-    res.redirect("/");
+    // Checking to see if the user is viewing the default list
+    if (listName === "Today"){
+        // Using the mongoose shortcut to save the new item to the database
+        item.save();
+        res.redirect("/");
+
+    }else{
+        List.findOne({name: listName}, function(err, foundList){
+            // Finding the custom list the user is adding the new item to
+            foundList.items.push(item);
+            foundList.save();
+            res.redirect("/"+ listName);
+        })
+    }
 
 });
 
