@@ -58,11 +58,15 @@ app.get("/", function(req, res){
         if (err){
             console.log(err);
         }else{
-            console.log(foundItems);
+            // IMPORTANT NOTE: previous array gloabl variable 'items' replaced with 'founditmems'
+            // foundItems is the array which contains our data from the database
+            // res.render method now moved into the else clause - 
+            // - to render the list page if and only if there were no errors retieving the items from the database
+            res.render('list', {listTitle: "Today", newListItems: foundItems});
         }
     });
 
-    res.render('list', {listTitle: "Today", newListItems: items});
+    
 });
 
 app.post('/', function(req, res){
