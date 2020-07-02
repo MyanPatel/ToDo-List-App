@@ -80,7 +80,7 @@ app.get("/", function(req, res){
         }
     });
 });
-
+// POST request handler for root route/ Home page
 app.post('/', function(req, res){
     // Retrieving the user input
     const itemName = req.body.newItem;
@@ -96,25 +96,43 @@ app.post('/', function(req, res){
 
 });
 
+// POST request handler for deleting list items
+app.post("/delete", function(req, res){
+    const checkedItem = req.body.checkbox;
+
+    Item.deleteOne({_id:checkedItem}, function(err){
+        if (err){
+            console.log(err);
+        }else{
+            console.log('Item successfully deleted!')
+            res.redirect('/');
+        }
+    })
+});
+
+// Work route
 app.get('/work', function(req,res){
     
     res.render('list',{listTitle: "Work List", newListItems: workItems});
 
 });
 
+// POST request handler for Work page route
 app.post("/work", function(req, res){
     let item = req.body.newItem;
     workItems.push(item);
     res.redirect("/work");
 });
 
+// About page
 app.get("/about", function(req,res){
     res.render('about');
 });
-
+// POST request handler for About page route
 app.post('/about', function(req, res){
     res.redirect("/about");
 });
+
 
 app.listen(3000, function(){
     console.log("server running on port 3000");
