@@ -21,7 +21,7 @@ const itemsSchema = new mongoose.Schema({
 });
 
 // Step 4: Create a model baed on the above schema
-const Item = mongoose.Model('Item', itemsSchema);
+const Item = mongoose.model('Item', itemsSchema);
 
 // Step 5: Create some new documents to pass to the list screen and replace the 'items' variable on line 30.
 const Item1 = new Item ({
