@@ -70,6 +70,9 @@ app.get("/", function(req, res){
                         console.log("Default items successfully saved!");
                     }
                     });
+                    // Will redirect to the root route with items in the database
+                    // Now it will enter the else section of this if statement where the items are rendered to the screen
+                    res.redirect("/");
             }else{
                 res.render('list', {listTitle: "Today", newListItems: foundItems});
             }
@@ -80,22 +83,17 @@ app.get("/", function(req, res){
 
 app.post('/', function(req, res){
     // Retrieving the user input
-    let item = req.body.newItem;
+    const itemName = req.body.newItem;
 
-    // Check if the request came from the work list or main list
-    // The value 'Work' is the value of the key 'list'
-    if (req.body.list === 'Work'){
-        // if work list, push the user input to the work list
-        workItems.push(item);
-        // re-direct to the work route (app.post('/work')) to render the work list page
-        res.redirect("/work")
-    }else{
-        // if false then request must be from the main list
-        // in which case add the user input to the main list
-        items.push(item);
-        // re-direct to the home route to render the page with the date-title etc
-        res.redirect("/");
-    }
+    // Creating a new document based on the user input stored in the constant above
+    const item = new Item ({
+        name: itemName
+    });
+
+    // Using the mongoose shortcut to save the new item to the database
+    item.save();
+    res.redirect("/");
+
 });
 
 app.get('/work', function(req,res){
