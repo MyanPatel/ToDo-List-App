@@ -21,6 +21,9 @@ const itemsSchema = new mongoose.Schema({
     name: String
 });
 
+// Step 4: Create a model baed on the above schema
+const Item = mongoose.Model('Item', itemsSchema);
+
 app.get("/", function(req, res){
 
     let day = date.getDate();
