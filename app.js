@@ -2,7 +2,6 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const date = require(__dirname + "/date.js");
 // Step 1: require the mongoose package
 const mongoose = require('mongoose');
 
@@ -26,8 +25,7 @@ const Item = mongoose.Model('Item', itemsSchema);
 
 app.get("/", function(req, res){
 
-    let day = date.getDate();
-    res.render('list', {listTitle: day, newListItems: items});
+    res.render('list', {listTitle: "Today", newListItems: items});
 });
 
 app.post('/', function(req, res){
