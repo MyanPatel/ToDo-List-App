@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 // Step 1: require the mongoose package
 const mongoose = require('mongoose');
+const e = require("express");
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -41,15 +42,25 @@ const Item3 = new Item ({
 const defaultArray = [Item1, Item2, Item3];
 
 // Step 6: Inserting all default items into the database
-Item.insertMany(defaultArray, function(err){
-    if (err){
-        console.log(err);
-    } else{
-        console.log("Default items successfully saved!");
-    }
-});
+// Item.insertMany(defaultArray, function(err){
+//     if (err){
+//         console.log(err);
+//     } else{
+//         console.log("Default items successfully saved!");
+//     }
+// });
+
 
 app.get("/", function(req, res){
+    
+    // Step 7: logging database items within the app.js file
+    Item.find({},function(err, foundItems){
+        if (err){
+            console.log(err);
+        }else{
+            console.log(foundItems);
+        }
+    });
 
     res.render('list', {listTitle: "Today", newListItems: items});
 });
