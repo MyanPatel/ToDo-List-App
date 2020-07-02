@@ -62,11 +62,20 @@ app.get("/", function(req, res){
             // foundItems is the array which contains our data from the database
             // res.render method now moved into the else clause - 
             // - to render the list page if and only if there were no errors retieving the items from the database
-            res.render('list', {listTitle: "Today", newListItems: foundItems});
+            if (foundItems.length === 0){
+                Item.insertMany(defaultArray, function(err){
+                    if (err){
+                        console.log(err);
+                    } else{
+                        console.log("Default items successfully saved!");
+                    }
+                    });
+            }else{
+                res.render('list', {listTitle: "Today", newListItems: foundItems});
+            }
+            
         }
     });
-
-    
 });
 
 app.post('/', function(req, res){
