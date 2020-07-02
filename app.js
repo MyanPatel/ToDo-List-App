@@ -23,6 +23,32 @@ const itemsSchema = new mongoose.Schema({
 // Step 4: Create a model baed on the above schema
 const Item = mongoose.Model('Item', itemsSchema);
 
+// Step 5: Create some new documents to pass to the list screen and replace the 'items' variable on line 30.
+const Item1 = new Item ({
+    name: "Buy food"
+});
+
+const Item2 = new Item ({
+    name: "Cook food"
+});
+
+const Item3 = new Item ({
+    name: "Eat food"
+});
+
+// Storing the above items as default items and adding them to an array
+// this allows to use the insertMany() method to insert them all at once
+const defaultArray = [Item1, Item2, Item3];
+
+// Step 6: Inserting all default items into the database
+Item.insertMany(defaultArray, function(err){
+    if (err){
+        console.log(err);
+    } else{
+        console.log("Default items successfully saved!");
+    }
+});
+
 app.get("/", function(req, res){
 
     res.render('list', {listTitle: "Today", newListItems: items});
