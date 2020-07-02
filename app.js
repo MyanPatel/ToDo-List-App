@@ -2,9 +2,9 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const _ = require("lodash");
 // Step 1: require the mongoose package
 const mongoose = require('mongoose');
-const e = require("express");
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -82,7 +82,8 @@ app.get("/", function(req, res){
 
 // Creating custom lists using Express Route Parameters
 app.get("/:customListName", function(req, res){
-    const customListName = req.params.customListName;
+    // Using Lodash ensure the correct list when the user enters varient names of the same list
+    const customListName = _.capitalize(req.params.customListName);
 
     // Checking to see if the custom list has already been created
     // findOne() method returns an object, NOT an array
@@ -142,16 +143,30 @@ app.post('/', function(req, res){
 
 // POST request handler for deleting list items
 app.post("/delete", function(req, res){
-    const checkedItem = req.body.checkbox;
+    const checkedItemId = req.body.checkbox;
+    const listName = req.body.listName;
 
-    Item.deleteOne({_id:checkedItem}, function(err){
-        if (err){
-            console.log(err);
-        }else{
-            console.log('Item successfully deleted!')
-            res.redirect('/');
-        }
-    })
+    if (listName === "Today"){
+
+        Item.findByIdAndRemove(checkedItemId, function(err){
+            if (!err){
+                console.log('Item successfully deleted!')
+                res.redirect('/');
+            }
+        });
+
+    } else{
+        // If this branch is exexuted then you know an item from a custom list needs to be removed
+        // findOneAndUpdate(Which list, what updates you want to make, callback function)
+        List.findOneAndUpdate({name: listName}, {$pull: {items: {_id:checkedItemId}}}, function(err, foundList){
+            if (!err){
+                res.redirect("/" + listName);
+            }
+        });
+
+    }
+
+    
 });
 
 // POST request handler for Work page route
